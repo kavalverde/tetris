@@ -3,10 +3,6 @@ class Controls {
   constructor(game) {
     this.game = game;
     this.tetrisEl = document.getElementById("tetris");
-    this.leftBtn = document.getElementById("left");
-    this.rightBtn = document.getElementById("right");
-    this.downBtn = document.getElementById("down");
-    this.rotateBtn = document.getElementById("rotate");
 
     // Variables para gestión táctil
     this.touchStartX = 0;
@@ -36,7 +32,6 @@ class Controls {
   // Configurar todos los controles
   setupControls() {
     this.setupKeyboardControls();
-    this.setupButtonControls();
     this.setupTouchControls();
   }
 
@@ -72,42 +67,6 @@ class Controls {
           this.game.togglePause();
           break;
       }
-    });
-  }
-
-  // Configurar controles de botones
-  setupButtonControls() {
-    // Controles táctiles de botones
-    this.leftBtn.addEventListener("click", () => {
-      if (!this.game.gameOver && !this.game.isPaused)
-        this.game.piece.moveLeft();
-    });
-
-    this.rightBtn.addEventListener("click", () => {
-      if (!this.game.gameOver && !this.game.isPaused)
-        this.game.piece.moveRight();
-    });
-
-    this.downBtn.addEventListener("click", () => {
-      if (!this.game.gameOver && !this.game.isPaused) {
-        if (this.game.piece.moveDown()) {
-          // Si moveDown devuelve true, significa que la pieza se ha bloqueado
-          this.game.handlePieceLock();
-        }
-      }
-    });
-
-    this.rotateBtn.addEventListener("click", () => {
-      if (!this.game.gameOver && !this.game.isPaused) this.game.piece.rotate();
-    });
-
-    // Prevenir comportamiento de desplazamiento para los botones en móvil
-    const buttons = document.querySelectorAll(".control-btn");
-    buttons.forEach((button) => {
-      button.addEventListener("touchstart", (e) => {
-        e.preventDefault();
-        button.click();
-      });
     });
   }
 

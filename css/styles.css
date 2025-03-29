@@ -29,7 +29,7 @@
   
   .game-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     align-items: center;
     max-width: 100%;
   }
@@ -46,7 +46,7 @@
     background-color: #000;
     background-image: url("../assets/background-tablero.jpg");
     background-size: cover;
-    background-position: center;
+    background-position: top left;
     border: 2px solid white;
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
     display: grid;
@@ -63,13 +63,25 @@
   
   .info-panel {
     display: flex;
-    flex-direction: column;
-    margin-top: 20px;
+    flex-direction: row-reverse;
+    margin-top: 10px;
+    gap: 60px;
   }
-  
+  .info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
   @media (min-width: 768px) {
+    .game-board {
+      margin-left: 150px;
+      margin-right: 20px;
+      margin-top: 80px;
+    }
     .info-panel {
       margin-top: 0;
+      flex-direction: column;
+      gap: 0px;
     }
   }
   
@@ -89,10 +101,6 @@
     width: 120px;
     height: 120px;
     margin-bottom: 20px;
-  }
-  
-  .cell {
-    border: 1px solid rgba(255, 255, 255, 0);
   }
   
   /* Base classes for all tetriminos */
@@ -134,43 +142,6 @@
   /* Z shape - zig zag inverted (3x2 blocks) */
   .tetrimino-Z {
     background-color: rgba(227, 78, 78, 0.7);
-  }
-  
-  .controls {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 20px;
-    width: 100%;
-    max-width: 300px;
-  }
-  
-  .controls-row {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    margin-bottom: 10px;
-  }
-  
-  .control-btn {
-    width: 60px;
-    height: 60px;
-    margin: 0 5px;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.2);
-    border: none;
-    color: white;
-    font-size: 24px;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    user-select: none;
-    touch-action: manipulation;
-  }
-  
-  .control-btn:active {
-    background-color: rgba(255, 255, 255, 0.4);
   }
   
   /* Pantalla de Game Over */
@@ -259,11 +230,6 @@
   }
 }
 
-.game-board {
-  margin: 10px auto;
-  touch-action: none;
-}
-
 .paused {
   filter: grayscale(50%) brightness(0.7);
 }
@@ -323,20 +289,6 @@
   @media (max-height: 700px) {
     .game-board {
       height: 65vh;
-    }
-  
-    .control-btn {
-      width: 50px;
-      height: 50px;
-      font-size: 20px;
-    }
-  }
-  
-  @media (max-width: 400px) {
-    .control-btn {
-      width: 45px;
-      height: 45px;
-      font-size: 18px;
     }
   }
   

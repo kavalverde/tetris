@@ -5,7 +5,6 @@ class Game {
     this.tetrisEl = document.getElementById("tetris");
     this.nextPieceEl = document.getElementById("next-piece");
     this.scoreEl = document.getElementById("score");
-    this.levelEl = document.getElementById("level");
     this.linesEl = document.getElementById("lines");
 
     // Estado del juego
@@ -148,7 +147,6 @@ class Game {
   // Actualizar elementos de la interfaz
   updateUI() {
     this.scoreEl.textContent = `Puntuación: ${this.score}`;
-    this.levelEl.textContent = `Nivel: ${this.level}`;
     this.linesEl.textContent = `Líneas: ${this.lines}`;
   }
 
@@ -157,9 +155,9 @@ class Game {
     const gameOverEl = document.createElement("div");
     gameOverEl.className = "game-over";
     gameOverEl.innerHTML = `
-        <h2>Game Over</h2>
+        <h2>Fin del juego</h2>
+        <br/>
         <p>Puntuación: ${this.score}</p>
-        <p>Nivel: ${this.level}</p>
         <p>Líneas: ${this.lines}</p>
         <button class="restart-btn">Reiniciar</button>
       `;

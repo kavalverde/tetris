@@ -17,7 +17,7 @@ const TETRIMINOS = {
       [1, 1, 0],
     ],
     className: "tetrimino-J",
-    imgPath: "./assets/tetrimino1.jpg",
+    imgPath: "./assets/tetrimino2.jpg",
   },
   L: {
     shape: [
@@ -26,7 +26,7 @@ const TETRIMINOS = {
       [0, 1, 1],
     ],
     className: "tetrimino-L",
-    imgPath: "./assets/tetrimino1.jpg",
+    imgPath: "./assets/tetrimino3.jpg",
   },
   O: {
     shape: [
@@ -34,7 +34,7 @@ const TETRIMINOS = {
       [1, 1],
     ],
     className: "tetrimino-O",
-    imgPath: "./assets/tetrimino2.jpg",
+    imgPath: "./assets/tetrimino4.jpg",
   },
   S: {
     shape: [
@@ -43,7 +43,7 @@ const TETRIMINOS = {
       [0, 0, 0],
     ],
     className: "tetrimino-S",
-    imgPath: "./assets/tetrimino2.jpg",
+    imgPath: "./assets/tetrimino5.jpg",
   },
   T: {
     shape: [
@@ -52,7 +52,7 @@ const TETRIMINOS = {
       [0, 0, 0],
     ],
     className: "tetrimino-T",
-    imgPath: "./assets/tetrimino2.jpg",
+    imgPath: "./assets/tetrimino6.jpg",
   },
   Z: {
     shape: [
@@ -61,7 +61,7 @@ const TETRIMINOS = {
       [0, 0, 0],
     ],
     className: "tetrimino-Z",
-    imgPath: "./assets/tetrimino1.jpg",
+    imgPath: "./assets/tetrimino7.jpg",
   },
 };
 
