@@ -6,6 +6,7 @@ class Game {
     this.nextPieceEl = document.getElementById("next-piece");
     this.scoreEl = document.getElementById("score");
     this.linesEl = document.getElementById("lines");
+    this.timerEl = document.getElementById("timer");
 
     // Estado del juego
     this.score = 0;
@@ -15,6 +16,10 @@ class Game {
     this.isPaused = false;
     this.dropInterval = null;
     this.dropSpeed = CONFIG.INITIAL_DROP_SPEED;
+
+    // Variables para el temporizador
+    this.timeRemaining = CONFIG.GAME_TIMER_SECONDS;
+    this.timerInterval = null;
 
     // Inicializar componentes del juego
     this.board = new Board();
@@ -31,6 +36,7 @@ class Game {
     this.gameOver = false;
     this.isPaused = false;
     this.dropSpeed = CONFIG.INITIAL_DROP_SPEED;
+    this.timeRemaining = CONFIG.GAME_TIMER_SECONDS;
 
     // Actualizar UI
     this.updateUI();
@@ -41,6 +47,57 @@ class Game {
 
     // Iniciar el intervalo de caída
     this.startDropInterval();
+
+    // Iniciar el temporizador
+    this.startTimer();
+  }
+
+  // Iniciar el temporizador del juego
+  startTimer() {
+    // Limpiar intervalo anterior si existe
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+    }
+
+    // Actualizar el timer en la UI inicialmente
+    this.updateTimerUI();
+
+    // Crear nuevo intervalo
+    this.timerInterval = setInterval(() => {
+      // Solo actualizar si el juego no está pausado
+      if (!this.isPaused) {
+        this.timeRemaining--;
+        this.updateTimerUI();
+
+        // Verificar si se acabó el tiempo
+        if (this.timeRemaining <= 0) {
+          this.endGameByTimeout();
+        }
+      }
+    }, 1000);
+  }
+
+  // Actualizar el temporizador en la UI
+  updateTimerUI() {
+    // Actualizar el texto
+    this.timerEl.textContent = `Tiempo: ${this.timeRemaining}s`;
+
+    // Estilos según el tiempo restante
+    this.timerEl.classList.remove("timer-warning", "timer-danger");
+
+    if (this.timeRemaining <= 5) {
+      this.timerEl.classList.add("timer-danger");
+    } else if (this.timeRemaining <= CONFIG.TIMER_WARNING_THRESHOLD) {
+      this.timerEl.classList.add("timer-warning");
+    }
+  }
+
+  // Finalizar el juego por tiempo
+  endGameByTimeout() {
+    clearInterval(this.timerInterval);
+    clearInterval(this.dropInterval);
+    this.gameOver = true;
+    this.showGameOver();
   }
 
   // Iniciar o reiniciar el intervalo de caída
@@ -100,6 +157,7 @@ class Game {
     if (isGameOver) {
       this.gameOver = true;
       clearInterval(this.dropInterval);
+      clearInterval(this.timerInterval);
       this.showGameOver();
     }
   }
@@ -148,6 +206,7 @@ class Game {
   updateUI() {
     this.scoreEl.textContent = `Puntuación: ${this.score}`;
     this.linesEl.textContent = `Líneas: ${this.lines}`;
+    this.updateTimerUI();
   }
 
   // Mostrar pantalla de Game Over

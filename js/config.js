@@ -11,6 +11,10 @@ const CONFIG = {
   LEVEL_SPEED_DECREASE: 100,
   MIN_DROP_SPEED: 100,
 
+  // Configuración del temporizador
+  GAME_TIMER_SECONDS: 10, // Tiempo de juego en segundos
+  TIMER_WARNING_THRESHOLD: 10, // Segundos restantes para mostrar advertencia visual
+
   // Puntuación
   POINTS_PER_LINE: 100,
   LINES_PER_LEVEL: 10,
