@@ -28,4 +28,9 @@ const CONFIG = {
   VIBRATION_SOFT: 20, // Vibración suave (ms)
   VIBRATION_MEDIUM: 50, // Vibración media (ms)
   VIBRATION_STRONG: 100, // Vibración fuerte (ms)
+
+  // Configuración para envío de puntaje y redirección
+  SCORE_ENDPOINT: "https://api.example.com/scores", // Endpoint para enviar puntajes
+  REDIRECT_URL: "https://example.com/leaderboard", // URL de redirección después de enviar el puntaje
+  REDIRECT_TIMEOUT: 3000, // Tiempo en ms antes de redireccionar
 };

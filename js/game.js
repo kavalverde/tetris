@@ -218,7 +218,10 @@ class Game {
         <br/>
         <p>Puntuación: ${this.score}</p>
         <p>Líneas: ${this.lines}</p>
+         <div class="game-over-buttons">
         <button class="restart-btn">Reiniciar</button>
+        <button class="submit-score-btn">Enviar Puntaje</button>
+      </div>
       `;
     document.body.appendChild(gameOverEl);
 
@@ -227,5 +230,64 @@ class Game {
       document.body.removeChild(gameOverEl);
       this.start();
     });
+
+    gameOverEl
+      .querySelector(".submit-score-btn")
+      .addEventListener("click", () => {
+        document.body.removeChild(gameOverEl);
+        this.sendScore(); // Llamar a sendScore sin parámetros
+      });
+  }
+
+  sendScore() {
+    // Construir URL con parámetros de puntaje
+    const scoreUrl = `${CONFIG.SCORE_ENDPOINT}?score=${this.score}&lines=${this.lines}&level=${this.level}`;
+
+    // Mostrar mensaje de envío
+    const messageEl = document.createElement("div");
+    messageEl.className = "score-message";
+    messageEl.innerHTML = `<p>Enviando puntaje...</p>`;
+    document.body.appendChild(messageEl);
+
+    // Enviar los datos al endpoint
+    fetch(scoreUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      // No se envía body, los datos están en la URL
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Error al enviar el puntaje");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        // Actualizar mensaje de éxito
+        messageEl.innerHTML = `<p>¡Puntaje enviado con éxito!</p>
+                            <p>Redireccionando en ${
+                              CONFIG.REDIRECT_TIMEOUT / 1000
+                            } segundos...</p>`;
+
+        // Redireccionar después del tiempo especificado
+        setTimeout(() => {
+          window.location.href = CONFIG.REDIRECT_URL;
+        }, CONFIG.REDIRECT_TIMEOUT);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        messageEl.innerHTML = `<p>Error al enviar el puntaje: ${
+          error.message
+        }</p>
+                            <p>Redireccionando en ${
+                              CONFIG.REDIRECT_TIMEOUT / 1000
+                            } segundos...</p>`;
+
+        // Redireccionar aunque haya un error
+        setTimeout(() => {
+          window.location.href = CONFIG.REDIRECT_URL;
+        }, CONFIG.REDIRECT_TIMEOUT);
+      });
   }
 }

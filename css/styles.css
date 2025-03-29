@@ -1,215 +1,227 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: Arial, sans-serif;
-    background-image: url("../assets/background.jpg");
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100vh;
-    padding: 20px;
-    touch-action: manipulation;
-    overflow: hidden;
-    background-size: cover;
-    background-position: top center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-color: #000;
-  }
-  
-  header {
-    margin-bottom: 20px;
-    text-align: center;
-  }
-  
-  .game-container {
-    display: flex;
-    flex-direction: column-reverse;
-    align-items: center;
-    max-width: 100%;
-  }
-  
-  @media (min-width: 768px) {
-    .game-container {
-      flex-direction: row;
-      justify-content: center;
-      gap: 20px;
-    }
-  }
-  
-  .game-board {
-    background-color: #000;
-    background-image: url("../assets/background-tablero.jpg");
-    background-size: cover;
-    background-position: top left;
-    border: 2px solid white;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-    display: grid;
-    grid-template-rows: repeat(20, 1fr);
-    grid-template-columns: repeat(10, 1fr);
-    width: 300px;
-    height: 600px;
-    max-width: 90vw;
-    max-height: 75vh;
-    aspect-ratio: 1/2;
-    position: relative; /* Para permitir eventos de toque dentro del tablero */
-    touch-action: none; /* Prevenir acciones predeterminadas del navegador como zoom o desplazamiento */
-  }
-  
-  .info-panel {
-    display: flex;
-    flex-direction: row-reverse;
-    margin-top: 10px;
-    gap: 60px;
-  }
-  .info {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  @media (min-width: 768px) {
-    .game-board {
-      margin-left: 150px;
-      margin-right: 20px;
-      margin-top: 80px;
-    }
-    .info-panel {
-      margin-top: 0;
-      flex-direction: column;
-      gap: 0px;
-    }
-  }
-  
-  #score,
-  #level,
-  #timer,
-  #lines {
-    margin-bottom: 15px;
-    font-size: 1.2rem;
-  }
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-  /* Estilos para el temporizador */
-  .timer {
-    font-weight: bold;
+body {
+  font-family: Arial, sans-serif;
+  background-image: url("../assets/background.jpg");
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  padding: 20px;
+  touch-action: manipulation;
+  overflow: hidden;
+  background-size: cover;
+  background-position: top center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-color: #000;
+}
+
+header {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.game-container {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  max-width: 100%;
+}
+
+@media (min-width: 768px) {
+  .game-container {
+    flex-direction: row;
+    justify-content: center;
+    gap: 20px;
   }
-  
-  .timer-warning {
-    color: #ffcc00;
-    animation: pulse-warning 1s infinite;
+}
+
+.game-board {
+  background-color: #000;
+  background-image: url("../assets/background-tablero.jpg");
+  background-size: cover;
+  background-position: top left;
+  border: 2px solid white;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+  display: grid;
+  grid-template-rows: repeat(20, 1fr);
+  grid-template-columns: repeat(10, 1fr);
+  width: 300px;
+  height: 600px;
+  max-width: 90vw;
+  max-height: 75vh;
+  aspect-ratio: 1/2;
+  position: relative; /* Para permitir eventos de toque dentro del tablero */
+  touch-action: none; /* Prevenir acciones predeterminadas del navegador como zoom o desplazamiento */
+}
+
+.info-panel {
+  display: flex;
+  flex-direction: row-reverse;
+  margin-top: 10px;
+  gap: 60px;
+}
+.info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+@media (min-width: 768px) {
+  .game-board {
+    margin-left: 150px;
+    margin-right: 20px;
+    margin-top: 80px;
   }
-  
-  .timer-danger {
-    color: #ff3333;
-    animation: pulse-danger 0.5s infinite;
+  .info-panel {
+    margin-top: 0;
+    flex-direction: column;
+    gap: 0px;
   }
-  
-  @keyframes pulse-warning {
-    0% { opacity: 1; }
-    50% { opacity: 0.7; }
-    100% { opacity: 1; }
-  }
-  
-  @keyframes pulse-danger {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
-  }
-  
-  #next-piece {
-    background-color: #000;
-    border: 2px solid white;
-    display: grid;
-    grid-template-rows: repeat(4, 1fr);
-    grid-template-columns: repeat(4, 1fr);
-    width: 120px;
-    height: 120px;
-    margin-bottom: 20px;
-  }
-  
-  /* Base classes for all tetriminos */
-  [class^="tetrimino-"] {
-    box-shadow: inset 0 0 2px rgba(255, 255, 255, 0.8);
-    border-radius: 2px;
-  }
-  
-  /* I shape - horizontal line (4x1 blocks) */
-  .tetrimino-I {
-    background-color: rgba(80, 227, 230, 0.7);
-  }
-  
-  /* J shape - L flipped (3x3 blocks) */
-  .tetrimino-J {
-    background-color: rgba(36, 97, 223, 0.7);
-  }
-  
-  /* L shape (3x3 blocks) */
-  .tetrimino-L {
-    background-color: rgba(223, 173, 36, 0.7);
-  }
-  
-  /* O shape - square (2x2 blocks) */
-  .tetrimino-O {
-    background-color: rgba(223, 217, 36, 0.7);
-  }
-  
-  /* S shape - zig zag (3x2 blocks) */
-  .tetrimino-S {
-    background-color: rgba(48, 211, 56, 0.7);
-  }
-  
-  /* T shape (3x2 blocks) */
-  .tetrimino-T {
-    background-color: rgba(132, 61, 198, 0.7);
-  }
-  
-  /* Z shape - zig zag inverted (3x2 blocks) */
-  .tetrimino-Z {
-    background-color: rgba(227, 78, 78, 0.7);
-  }
-  
-  /* Pantalla de Game Over */
-  .game-over {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.8);
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    z-index: 100;
-  }
-  
-  .restart-btn {
-    margin-top: 15px;
-    padding: 10px 20px;
-    background-color: #30d338;
-    border: none;
-    border-radius: 5px;
-    color: white;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  /* Indicadores visuales para gestos táctiles */
-  .swipe-indicator {
-    position: absolute;
-    background-color: rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: 10;
-  }
-  
-  .swipe-indicator.active {
+}
+
+#score,
+#level,
+#timer,
+#lines {
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+}
+
+/* Estilos para el temporizador */
+.timer {
+  font-weight: bold;
+}
+
+.timer-warning {
+  color: #ffcc00;
+  animation: pulse-warning 1s infinite;
+}
+
+.timer-danger {
+  color: #ff3333;
+  animation: pulse-danger 0.5s infinite;
+}
+
+@keyframes pulse-warning {
+  0% {
     opacity: 1;
   }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-danger {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+#next-piece {
+  background-color: #000;
+  border: 2px solid white;
+  display: grid;
+  grid-template-rows: repeat(4, 1fr);
+  grid-template-columns: repeat(4, 1fr);
+  width: 120px;
+  height: 120px;
+  margin-bottom: 20px;
+}
+
+/* Base classes for all tetriminos */
+[class^="tetrimino-"] {
+  box-shadow: inset 0 0 2px rgba(255, 255, 255, 0.8);
+  border-radius: 2px;
+}
+
+/* I shape - horizontal line (4x1 blocks) */
+.tetrimino-I {
+  background-color: rgba(80, 227, 230, 0.7);
+}
+
+/* J shape - L flipped (3x3 blocks) */
+.tetrimino-J {
+  background-color: rgba(36, 97, 223, 0.7);
+}
+
+/* L shape (3x3 blocks) */
+.tetrimino-L {
+  background-color: rgba(223, 173, 36, 0.7);
+}
+
+/* O shape - square (2x2 blocks) */
+.tetrimino-O {
+  background-color: rgba(223, 217, 36, 0.7);
+}
+
+/* S shape - zig zag (3x2 blocks) */
+.tetrimino-S {
+  background-color: rgba(48, 211, 56, 0.7);
+}
+
+/* T shape (3x2 blocks) */
+.tetrimino-T {
+  background-color: rgba(132, 61, 198, 0.7);
+}
+
+/* Z shape - zig zag inverted (3x2 blocks) */
+.tetrimino-Z {
+  background-color: rgba(227, 78, 78, 0.7);
+}
+
+/* Pantalla de Game Over */
+.game-over {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  z-index: 100;
+}
+
+.restart-btn {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #30d338;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* Indicadores visuales para gestos táctiles */
+.swipe-indicator {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 10;
+}
+
+.swipe-indicator.active {
+  opacity: 1;
+}
 
 .rotate-indicator {
   position: absolute;
@@ -313,16 +325,77 @@
 .continue-btn:active {
   transform: scale(0.95);
 }
-  /* Ajustes para dispositivos más pequeños */
-  @media (max-height: 700px) {
-    .game-board {
-      height: 65vh;
-    }
+/* Ajustes para dispositivos más pequeños */
+@media (max-height: 700px) {
+  .game-board {
+    height: 65vh;
   }
-  
-  /* Para dispositivos de escritorio, ocultar controles táctiles */
-  @media (min-width: 1024px) {
-    #touch-controls {
-      display: none;
-    }
+}
+
+/* Para dispositivos de escritorio, ocultar controles táctiles */
+@media (min-width: 1024px) {
+  #touch-controls {
+    display: none;
   }
+}
+.game-over-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.submit-score-btn {
+  padding: 12px 24px;
+  background-color: #3061d3;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.submit-score-btn:hover {
+  background-color: #2753b8;
+  transform: scale(1.05);
+}
+
+.submit-score-btn:active {
+  transform: scale(0.95);
+}
+
+/* Estilos para botones de Game Over simplificados */
+
+.score-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  z-index: 200;
+  min-width: 300px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+  animation: fadeIn 0.3s ease-in-out;
+  color: white;
+}
+
+.score-message p {
+  margin: 10px 0;
+  font-size: 18px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
