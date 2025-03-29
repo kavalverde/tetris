@@ -206,6 +206,7 @@ header {
   color: white;
   cursor: pointer;
   font-size: 16px;
+  display: none;
 }
 
 /* Indicadores visuales para gestos táctiles */
