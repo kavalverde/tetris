@@ -3,28 +3,14 @@ class Controls {
   constructor(game) {
     this.game = game;
     this.tetrisEl = document.getElementById("tetris");
+    this.controlsEnabled = true;
 
-    // Variables para gestión táctil
-    this.touchStartX = 0;
-    this.touchStartY = 0;
-    this.touchStartTime = 0;
-    this.lastTapTime = 0;
-    this.isTouching = false;
-    this.touchTimeout = null;
-    this.hasMoved = false; // Bandera para indicar si el dedo se ha movido durante el toque
-    this.longPressThreshold = 500; // Tiempo en ms para considerar un toque largo
-
-    // Crear indicador visual para gestos
-    this.swipeIndicator = document.createElement("div");
-    this.swipeIndicator.className = "swipe-indicator";
-    this.tetrisEl.appendChild(this.swipeIndicator);
-
-    // Indicador visual para rotación (toque largo)
-    this.rotateIndicator = document.createElement("div");
-    this.rotateIndicator.className = "rotate-indicator";
-    this.rotateIndicator.style.display = "none";
-    this.rotateIndicator.innerHTML = "↻";
-    this.tetrisEl.appendChild(this.rotateIndicator);
+    // Referencias a los botones de control
+    this.leftBtn = document.getElementById("left-btn");
+    this.rightBtn = document.getElementById("right-btn");
+    this.downBtn = document.getElementById("down-btn");
+    this.rotateBtn = document.getElementById("rotate-btn");
+    this.dropBtn = document.getElementById("drop-btn");
 
     this.setupControls();
   }
@@ -32,13 +18,21 @@ class Controls {
   // Configurar todos los controles
   setupControls() {
     this.setupKeyboardControls();
-    this.setupTouchControls();
+    this.setupButtonControls();
+
+    // Rotación del dispositivo
+    window.addEventListener("orientationchange", () => {
+      // Ajustar la disposición del juego en caso de rotación
+      setTimeout(() => {
+        this.adjustLayoutOnRotation();
+      }, 300); // Pequeño retraso para que la pantalla se reajuste primero
+    });
   }
 
   // Configurar controles de teclado
   setupKeyboardControls() {
     document.addEventListener("keydown", (e) => {
-      if (this.game.gameOver) return;
+      if (this.game.gameOver || !this.controlsEnabled) return;
 
       switch (e.key) {
         case "ArrowLeft":
@@ -70,182 +64,102 @@ class Controls {
     });
   }
 
-  // Configurar controles táctiles en el tablero
-  setupTouchControls() {
-    // Eventos táctiles en el tablero
-    this.tetrisEl.addEventListener("touchstart", (e) => {
-      if (this.game.gameOver || this.game.isPaused) return;
+  // Configurar controles de botones táctiles
+  setupButtonControls() {
+    // Solo configurar si los botones existen
+    if (this.leftBtn) {
+      this.leftBtn.addEventListener("click", () => {
+        if (this.game.gameOver || this.game.isPaused || !this.controlsEnabled)
+          return;
+        this.game.piece.moveLeft();
+        this.vibrate(CONFIG.VIBRATION_SOFT);
+      });
+    }
 
-      const touch = e.touches[0];
-      this.touchStartX = touch.clientX;
-      this.touchStartY = touch.clientY;
-      this.touchStartTime = Date.now();
-      this.isTouching = true;
-      this.hasMoved = false;
+    if (this.rightBtn) {
+      this.rightBtn.addEventListener("click", () => {
+        if (this.game.gameOver || this.game.isPaused || !this.controlsEnabled)
+          return;
+        this.game.piece.moveRight();
+        this.vibrate(CONFIG.VIBRATION_SOFT);
+      });
+    }
 
-      // Mostrar indicador visual en la posición del toque
-      const rect = this.tetrisEl.getBoundingClientRect();
-      this.swipeIndicator.style.left = `${touch.clientX - rect.left - 25}px`;
-      this.swipeIndicator.style.top = `${touch.clientY - rect.top - 25}px`;
-      this.swipeIndicator.style.width = "50px";
-      this.swipeIndicator.style.height = "50px";
-      this.swipeIndicator.classList.add("active");
-
-      // Configurar timeout para toque largo (rotación)
-      this.touchTimeout = setTimeout(() => {
-        if (this.isTouching && !this.hasMoved) {
-          // Solo rotar si el dedo no se ha movido significativamente
-          this.game.piece.rotate();
-          this.vibrate(50); // Feedback háptico
-
-          // Mostrar indicador visual de rotación
-          this.rotateIndicator.style.display = "flex";
-          this.rotateIndicator.style.left = `${
-            touch.clientX - rect.left - 30
-          }px`;
-          this.rotateIndicator.style.top = `${touch.clientY - rect.top - 30}px`;
-
-          // Ocultar el indicador después de un tiempo
-          setTimeout(() => {
-            this.rotateIndicator.style.display = "none";
-          }, 300);
+    if (this.downBtn) {
+      this.downBtn.addEventListener("click", () => {
+        if (this.game.gameOver || this.game.isPaused || !this.controlsEnabled)
+          return;
+        if (this.game.piece.moveDown()) {
+          this.game.handlePieceLock();
         }
-      }, this.longPressThreshold);
-    });
+        this.vibrate(CONFIG.VIBRATION_SOFT);
+      });
 
-    this.tetrisEl.addEventListener("touchmove", (e) => {
-      if (this.game.gameOver || !this.isTouching || this.game.isPaused) return;
+      // Para permitir mantener pulsado el botón para mover rápido hacia abajo
+      let downInterval;
+      this.downBtn.addEventListener("touchstart", (e) => {
+        if (this.game.gameOver || this.game.isPaused || !this.controlsEnabled)
+          return;
+        e.preventDefault(); // Prevenir comportamiento por defecto
 
-      const touch = e.touches[0];
-      const currentX = touch.clientX;
-      const currentY = touch.clientY;
-
-      const deltaX = currentX - this.touchStartX;
-      const deltaY = currentY - this.touchStartY;
-      const threshold = CONFIG.SWIPE_THRESHOLD || 30;
-
-      // Verificar si el movimiento es suficiente para considerarlo un swipe
-      if (Math.abs(deltaX) > threshold || Math.abs(deltaY) > threshold) {
-        this.hasMoved = true; // Marcar que ha habido movimiento significativo
-
-        // Cancelar el timeout de rotación si el usuario está haciendo swipe
-        if (this.touchTimeout) {
-          clearTimeout(this.touchTimeout);
-          this.touchTimeout = null;
-        }
-      }
-
-      // Determinar dirección dominante del movimiento
-      if (Math.abs(deltaX) > threshold && Math.abs(deltaX) > Math.abs(deltaY)) {
-        // Movimiento horizontal
-        if (deltaX > 0) {
-          // Derecha
-          this.game.piece.moveRight();
-          this.touchStartX = currentX; // Reset para permitir múltiples movimientos
-        } else {
-          // Izquierda
-          this.game.piece.moveLeft();
-          this.touchStartX = currentX; // Reset para permitir múltiples movimientos
+        // Primer movimiento
+        if (this.game.piece.moveDown()) {
+          this.game.handlePieceLock();
         }
 
-        // Actualizar posición del indicador visual
-        const rect = this.tetrisEl.getBoundingClientRect();
-        this.swipeIndicator.style.left = `${touch.clientX - rect.left - 25}px`;
-      } else if (
-        Math.abs(deltaY) > threshold &&
-        Math.abs(deltaY) > Math.abs(deltaX)
-      ) {
-        // Movimiento vertical (solo hacia abajo)
-        if (deltaY > 0) {
-          // Abajo (mover más rápido)
+        // Movimientos continuos
+        downInterval = setInterval(() => {
           if (this.game.piece.moveDown()) {
-            // Si moveDown devuelve true, significa que la pieza se ha bloqueado
             this.game.handlePieceLock();
+            clearInterval(downInterval);
           }
-          this.touchStartY = currentY; // Reset para permitir múltiples movimientos
+        }, 100); // Más rápido que el intervalo normal para mejor respuesta
 
-          // Actualizar posición del indicador visual
-          const rect = this.tetrisEl.getBoundingClientRect();
-          this.swipeIndicator.style.top = `${touch.clientY - rect.top - 25}px`;
+        this.vibrate(CONFIG.VIBRATION_SOFT);
+      });
+
+      // Detener el movimiento cuando se suelta el botón
+      this.downBtn.addEventListener("touchend", () => {
+        clearInterval(downInterval);
+      });
+
+      this.downBtn.addEventListener("touchcancel", () => {
+        clearInterval(downInterval);
+      });
+    }
+
+    if (this.rotateBtn) {
+      this.rotateBtn.addEventListener("click", () => {
+        if (this.game.gameOver || this.game.isPaused || !this.controlsEnabled)
+          return;
+        this.game.piece.rotate();
+        this.vibrate(CONFIG.VIBRATION_MEDIUM);
+      });
+    }
+
+    if (this.dropBtn) {
+      this.dropBtn.addEventListener("click", () => {
+        if (this.game.gameOver || this.game.isPaused || !this.controlsEnabled)
+          return;
+        if (this.game.piece.hardDrop()) {
+          this.game.handlePieceLock();
         }
-      }
-    });
+        this.vibrate(CONFIG.VIBRATION_STRONG);
+      });
+    }
 
-    this.tetrisEl.addEventListener("touchend", (e) => {
-      if (this.game.gameOver || this.game.isPaused) return;
+    // Agregar evento para pausar juego (doble toque en el tablero)
+    let lastTapTime = 0;
+    this.tetrisEl.addEventListener("click", () => {
+      const currentTime = Date.now();
+      const timeSinceLastTap = currentTime - lastTapTime;
 
-      // Limpiar el timeout de rotación
-      if (this.touchTimeout) {
-        clearTimeout(this.touchTimeout);
-        this.touchTimeout = null;
-      }
-
-      const touchDuration = Date.now() - this.touchStartTime;
-      const doubleTapThreshold = CONFIG.DOUBLE_TAP_DELAY || 300;
-
-      // Solo procesar el doble tap si fue un toque rápido y no hubo movimiento significativo
-      if (touchDuration < 200 && !this.hasMoved) {
-        const currentTime = Date.now();
-        const timeSinceLastTap = currentTime - this.lastTapTime;
-
-        if (timeSinceLastTap < doubleTapThreshold) {
-          // Doble tap: hard drop
-          if (this.game.piece.hardDrop()) {
-            this.game.handlePieceLock();
-            this.vibrate(100); // Feedback háptico más fuerte para hard drop
-          }
-        }
-
-        this.lastTapTime = currentTime;
+      if (timeSinceLastTap < 300) {
+        // Doble toque rápido
+        this.game.togglePause();
       }
 
-      // Ocultar el indicador visual
-      this.swipeIndicator.classList.remove("active");
-      this.isTouching = false;
-    });
-
-    // Asegurarse de que no perdemos el estado de toque
-    this.tetrisEl.addEventListener("touchcancel", () => {
-      if (this.touchTimeout) {
-        clearTimeout(this.touchTimeout);
-        this.touchTimeout = null;
-      }
-      this.swipeIndicator.classList.remove("active");
-      this.rotateIndicator.style.display = "none";
-      this.isTouching = false;
-    });
-
-    // Detector de gestos más avanzados (pinch para pausar)
-    let touchDistance = 0;
-    this.tetrisEl.addEventListener("touchstart", (e) => {
-      if (e.touches.length === 2) {
-        const dx = e.touches[0].clientX - e.touches[1].clientX;
-        const dy = e.touches[0].clientY - e.touches[1].clientY;
-        touchDistance = Math.sqrt(dx * dx + dy * dy);
-      }
-    });
-
-    this.tetrisEl.addEventListener("touchmove", (e) => {
-      if (e.touches.length === 2) {
-        const dx = e.touches[0].clientX - e.touches[1].clientX;
-        const dy = e.touches[0].clientY - e.touches[1].clientY;
-        const currentDistance = Math.sqrt(dx * dx + dy * dy);
-
-        // Detectar gesto de pinch (pellizco con dos dedos)
-        const pinchThreshold = 50;
-        if (Math.abs(currentDistance - touchDistance) > pinchThreshold) {
-          this.game.togglePause();
-          touchDistance = currentDistance; // Resetear para evitar múltiples activaciones
-        }
-      }
-    });
-
-    // Rotación del dispositivo
-    window.addEventListener("orientationchange", () => {
-      // Ajustar la disposición del juego en caso de rotación
-      setTimeout(() => {
-        this.adjustLayoutOnRotation();
-      }, 300); // Pequeño retraso para que la pantalla se reajuste primero
+      lastTapTime = currentTime;
     });
   }
 
