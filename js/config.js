@@ -12,7 +12,7 @@ const CONFIG = {
   MIN_DROP_SPEED: 100,
 
   // Configuración del temporizador
-  GAME_TIMER_SECONDS: 10, // Tiempo de juego en segundos
+  GAME_TIMER_SECONDS: 60, // Tiempo de juego en segundos
   TIMER_WARNING_THRESHOLD: 10, // Segundos restantes para mostrar advertencia visual
 
   // Puntuación
