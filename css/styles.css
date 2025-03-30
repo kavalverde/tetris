@@ -55,7 +55,7 @@ header {
   width: 300px;
   height: 600px;
   max-width: 90vw;
-  max-height: 75vh;
+  max-height: 65vh;
   aspect-ratio: 1/2;
   position: relative; /* Para permitir eventos de toque dentro del tablero */
   touch-action: none; /* Prevenir acciones predeterminadas del navegador como zoom o desplazamiento */
